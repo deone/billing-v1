@@ -10,7 +10,8 @@ def check_data_balance(subscription):
     else:
         data_balance = subscription.radcheck.data_balance
 
-    if subscription.package.volume != 'Unlimited':
+    # Don't check data balance for unlimited subscriptions and instant vouchers
+    if subscription.package.volume != 'Unlimited' or subscription.radcheck.user != None:
         return data_balance > 0
     return True
 
@@ -40,7 +41,7 @@ class AbstractPackageSubscription(models.Model):
         abstract = True
 
     def has_data_left(self):
-	return check_data_balance(self)
+        return check_data_balance(self)
 
 class PackageSubscription(AbstractPackageSubscription):
     radcheck = models.ForeignKey(Radcheck)
